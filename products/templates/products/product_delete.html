@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="panels">
+<div class="md:grid md:grid-cols-5 md:gap-6">
+<div class="md:flex justify-center mt-5 md:mt-0 md:col-span-5">
+
+<form method="post">
+{% csrf_token %}  
+
+
+	  <nav class="tabs flex flex-col sm:flex-row">
+	      <a data-target="panel-1" class="border-l border-t border-r rounded-t py-2 px-4 tab text-gray-600">
+	          Delete
+	      </a>
+
+	  </nav>
+
+	<div class="shadow overflow-hidden sm:rounded-md">
+
+		<div class="panel-1 tab-content active">
+	      <div class="mt-10 sm:mt-0">
+	          <div class="px-4 py-5 bg-white sm:p-6">
+
+	            <img src="{% static 'images/spacer1.png' %}" alt="Spacer">
+
+		        <svg class="fill-current h-24 w-24 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+		          <path data-name="layer2" fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" d="M54 12v50H10V12m-6 0h56m-40 0V2h24v10"></path>
+		          <path data-name="layer1" fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" d="M32 22v30M22 22v30m20-30v30"></path>
+		        </svg>
+
+		        <div class="text-3xl text-center">Are you sure?</div>
+	        
+	    	</div>
+ 		</div>
+	</div>
+
+	<div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+
+	  <a href="{% url 'products:product-update' product.pk %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</a>
+
+	  <button type="submit" name="delete_record" id="delete_record" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+	    Confirm Delete
+	  </button>
+
+	</div>
+
+</form>
+
+</div>
+</div>
+</div>
+
+{% endblock content %}

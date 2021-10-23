@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+
+input {
+  width: 100%;
+  padding-top: 10px;
+}
+
+textarea:focus, input:focus{
+    outline: none;
+}
+
+</style>
+</head>
+
+<div class="md:grid md:grid-cols-5 md:gap-6">
+<div class="md:flex justify-center mt-5 md:mt-0 md:col-span-5">
+<div class="shadow overflow-hidden sm:rounded-md">
+
+
+
+<ul class="list-reset flex border-b">
+  <li class="mr-1">
+    <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold"" onclick="openTab('Detail')" href="{% url 'suppliers:supplier-update' object_list %}">Detail</a>
+  </li>
+  <li class="mr-1">
+    <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="{% url 'suppliers:supplier-list-note' object_list %}">Notes</a>
+  </li>
+   <li class="mr-1">
+    <a class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-dark font-semibold" href="#">Reviews</a>
+  </li>
+</ul>
+
+	<div id="Detail" class="tabSelect"> 
+
+        <div class="mt-10 sm:mt-0">
+
+            <div class="px-4 py-5 bg-white sm:p-6">
+              <div class="grid grid-cols-6 gap-2">
+
+
+                {% if not review_list %}
+                  <div class="col-span-6 sm:col-span-6">
+
+                  <div class="w-full">
+                  <div class="sm:w-auto md:w-auto lg:w-auto mt-2 mx-auto bg-white rounded-lg shadow p-4">
+                  <img src="{% static 'images/spacer1.png' %}" alt="Spacer">
+                  No reviews yet... 
+                  </div>
+                  </div>
+                  
+                  </div>
+
+                {% else %}
+
+                  {% for review in review_list %}
+                    <div class="col-span-6 sm:col-span-6">
+
+                  	<div class="sm:w-auto md:w-auto lg:w-auto mt-1 mx-auto bg-white rounded-lg shadow p-4">
+                    <img src="{% static 'images/spacer1.png' %}" alt="Spacer">
+
+                    <fieldset class="starability-result" data-rating="{{ review.stars }}">
+                    </fieldset>
+
+                  	<div class="font-medium">
+                  	Author: {{ review.author.username }}
+                    </div>
+                    <div class="font-semibold">
+                  	Review: {{ review.reviews }}
+                  	</div>
+                  	<div class="text-gray-700 text-xs">                	
+                    Date: {{ review.date_added }}
+
+                    {% if review.author_id == request.user.id and request.user.is_authenticated %}
+                    <a href="{% url 'suppliers:supplier-delete-review' review.id %}" class="text-indigo-600 font-black">Delete</a>
+                    {% endif %}
+
+                    <hr/>
+                    </div>
+                	  </div>
+
+                    </div>
+
+                  {% endfor %}
+                {% endif %}
+                
+                </div>
+              </div>
+            </div>
+
+            {% if review.author_id != request.user.id %}
+            <form method="POST">
+            {% csrf_token %} 
+
+            <div class="px-4 py-5 bg-white sm:p-6">
+              <div class="grid grid-cols-6 gap-0">
+
+	              <div class="col-span-6 sm:col-span-6">
+
+                {{ form.non_field_errors }}
+                {{ form.stars.errors }}
+                <fieldset class="starability-basic w-full">
+                {% for each, value in form.stars.field.choices %}
+                  <input type="radio" name="stars" value="{{ each }}" id="{{ form.stars.auto_id }}_{{ forloop.counter0 }}">
+                  <label for="{{ form.stars.auto_id }}_{{ forloop.counter0 }}">{{ value }}</label>
+                {% endfor %}
+                </fieldset>
+				        </div>
+
+	              <div class="col-span-6 sm:col-span-6">
+	                {{ form.reviews.errors }}
+	                <label for="reviews" class="block text-sm font-medium text-gray-700">Reviews</label>
+	                <div class="border-2 border-gray-300 bg-white h-30 px-3 py-4 pr-4 rounded-lg text-sm focus:outline-none" required>
+	                {{ form.reviews }}
+	              </div>
+	              </div>
+
+          	          </div>
+          	       </div>
+          	    </div>
+
+            		<div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+            	      <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            	      Add Review
+            	      </button>
+            		</div>
+
+	             </form>
+
+              	</div>
+                {% endif %}
+
+</div>
+</div>
+</div>
+
+<script>
+
+function openTab(tabName) {
+  var i;
+  var x = document.getElementsByClassName("tabSelect");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  document.getElementById(tabName).style.display = "block";
+}
+
+</script>
+    
+{% endblock content %}

@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding-top: 6px;
+}
+
+textarea {
+	width: 100%;
+	height: 100%;
+}
+
+textarea:focus, input:focus{
+    outline: none;
+}
+
+.tooltip{
+  visibility: hidden;
+  position: absolute;
+}
+
+.has-tooltip:hover .tooltip {
+  visibility: visible;
+  margin-top: -36px;
+  margin-left: 0px;
+  border-radius: 10px;
+  border: solid 2px #6366F1;
+  background-color: white;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #6366F1;
+  font-size: 10px;
+  z-index: 100;
+}
+
+</style>
+</head>
+
+<div id="panels">
+<div class="md:grid md:grid-cols-5 md:gap-6">
+<div class="md:flex justify-center mt-5 md:mt-0 md:col-span-5">
+
+<form method="post">
+{% csrf_token %}  
+
+	<ul class="list-reset flex border-b">
+	  <li class="mr-1">
+	    <a class="bg-white inline-block border-l border-t border-r rounded-t py-4 px-4 text-blue-dark font-semibold" onclick="openTab('Detail')" href="#">Detail</a>
+	  </li>
+	  <li class="mr-1">
+	    <a class="bg-white inline-block py-4 px-4 text-blue hover:text-blue-darker font-semibold" href="{% url 'products:product-list-note' product.pk %}">Notes</a>
+	  </li>
+	  <li class="mr-1">
+	    <a class="bg-white inline-block py-4 px-4 text-blue hover:text-blue-darker font-semibold" href="{% url 'products:product-list-review' product.pk %}">Reviews</a>
+	  </li>
+
+	  <li class="mr-1">
+
+	    <table class="text-sm">
+	      <tr>
+	      <td style="padding-left: 100px">
+	      </td>
+	      <td style="padding-left: 50px">
+
+	      <div class="text-sm border-2 border-indigo-600 rounded-md shadow-sm">
+	      {{ form.active }}
+	  	  </div>
+
+	      </td>
+	      <td style="padding-left: 10px">
+	      Active
+	      </td>
+	      <td style="padding-left: 10px">
+	      Date added: 
+	      </td>
+	      <td>
+	      {{ product.date_added }}
+	      </td>
+	      </tr>
+
+	      <tr>
+	      <td style="padding-left: 100px">
+	      </td>
+	      <td style="padding-left: 50px">
+	      </td>
+	      <td style="padding-left: 10px">
+	      </td>
+	      <td style="padding-left: 10px">
+	      Date modified:
+	      </td>
+	      <td>
+	      {{ product.date_modified }}
+	      </td>
+	      </tr>
+	    </table>
+
+	  </li>
+
+	</ul>
+
+	<div class="shadow overflow-hidden sm:rounded-md">
+
+		<div class="panel-1 tab-content active">
+	      <div class="mt-10 sm:mt-0">
+	          <div class="px-4 py-5 bg-white sm:p-6">
+	            <div class="grid grid-cols-6 gap-6">
+
+	              {{ form.non_field_errors }}
+	              <div class="col-span-6 sm:col-span-3">
+	                {{ form.product_code.errors }}
+	                <label for="product_code" class="block text-sm font-medium text-gray-700">Product Code</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none" required>
+	                <div class="has-tooltip">
+	                {{ form.product_code }}
+	                <span class="tooltip">NO SPACES IN PRODUCT CODE PLEASE</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3">
+	                {{ form.internal_code.errors }}
+	                <label for="internal_code" class="block text-sm font-medium text-gray-700">Tnternal Code</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.internal_code }}
+	                <span class="tooltip">NO SPACES IN INTERNAL CODE PLEASE</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-4">
+	                {{ form.brand_name.errors }}
+	                <label for="brand_name" class="block text-sm font-medium text-gray-700">Brand Name</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.brand_name }}
+	                <span class="tooltip">BRAND NAME OF THE PRODUCT</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+	                {{ form.brand_family.errors }}
+	                <label for="brand_family" class="block text-sm font-medium text-gray-700">Brand Family</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.brand_family }}
+	                <span class="tooltip">BRAND FAMILY OF THE PRODUCT</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.upc.errors }}
+	                <label for="upc" class="block text-sm font-medium text-gray-700">UPC</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.upc }}
+	                <span class="tooltip">NO SPACE NUMBERS ONLY IN UPC PLEASE</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.part_number.errors }}
+	                <label for="part_number" class="block text-sm font-medium text-gray-700">Part Number</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.part_number }}
+	                <span class="tooltip">NO SPACE IN PART NUMBER PLEASE</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.inventory_count.errors }}
+	                <label for="inventory_count" class="block text-sm font-medium text-gray-700">Inventory</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.inventory_count }}
+	                <span class="tooltip">INTEGERS ONLY PLEASE</span></div>
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.sell_price.errors }}
+	                <label for="sell_price" class="block text-sm font-medium text-gray-700">Sell Price</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none" required>
+	                <div class="has-tooltip">
+	                {{ form.sell_price }}
+	                <span class="tooltip">NUMBERS ONLY PLEASE</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.cost_price.errors }}
+	                <label for="cost_price" class="block text-sm font-medium text-gray-700">Cost Price</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.cost_price }}
+	                <span class="tooltip">NUMBERS ONLY PLEASE</span></div>
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.product_material.errors }}
+	                <label for="product_material" class="block text-sm font-medium text-gray-700">Product Material</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_material }}
+	                <span class="tooltip">PRODUCT MATERIAL</span></div>
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.product_color.errors }}
+	                <label for="product_color" class="block text-sm font-medium text-gray-700">Product Color</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_color }}
+	                <span class="tooltip">PRODUCT COLOR</span></div>
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                
+	                <label for="product_length" class="block text-sm font-medium text-gray-700">Product Length</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_length }}
+	                <span class="tooltip">NUMBERS ONLY INCHES PLEASE</span></div>	       
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.product_width.errors }}
+	                <label for="product_width" class="block text-sm font-medium text-gray-700">Product Width</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_width }}
+	                <span class="tooltip">NUMBERS ONLY INCHES PLEASE</span></div>
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.product_height.errors }}
+	                <label for="product_height" class="block text-sm font-medium text-gray-700">Product Height</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_height }}
+	                <span class="tooltip">NUMBERS ONLY INCHES PLEASE</span></div>	                
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.product_volume.errors }}
+	                <label for="product_volume" class="block text-sm font-medium text-gray-700">Product Volume</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_volume }}
+	                <span class="tooltip">NUMBERS ONLY CUBIC INCHES PLEASE</span></div>
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+	                {{ form.product_weight.errors }}
+	                <label for="product_weight" class="block text-sm font-medium text-gray-700">Product Weight</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                <div class="has-tooltip">
+	                {{ form.product_weight }}
+	                <span class="tooltip">NUMBERS ONLY LBS PLEASE</span></div>
+	                </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_title.errors }}
+	                <label for="product_title" class="block text-sm font-medium text-gray-700">Product Title</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none" required>
+	                {{ form.product_title }}
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_description.errors }}
+	                <label for="product_description" class="block text-sm font-medium text-gray-700">Product Description</label>
+	                <div class="border-2 border-gray-300 bg-white h-60 px-2 py-2 pr-5 rounded-lg text-sm focus:outline-none">
+	                {{ form.product_description }}
+	              </div>
+	              </div>
+
+				  <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_image_one.errors }}
+	                <label for="product_image_one" class="block text-sm font-medium text-gray-700">Product Image</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                {{ form.product_image_one }}
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_image_two.errors }}
+	                <label for="product_image_two" class="block text-sm font-medium text-gray-700">Product Image</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                {{ form.product_image_two }}
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_image_three.errors }}
+	                <label for="product_image_three" class="block text-sm font-medium text-gray-700">Product Image</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                {{ form.product_image_three }}
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_image_four.errors }}
+	                <label for="product_image_four" class="block text-sm font-medium text-gray-700">Product Image</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                {{ form.product_image_four }}
+	              </div>
+	              </div>
+
+	              <div class="col-span-6 sm:col-span-6 lg:col-span-6">
+	                {{ form.product_image_five.errors }}
+	                <label for="product_image_five" class="block text-sm font-medium text-gray-700">Product Image</label>
+	                <div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none">
+	                {{ form.product_image_five }}
+	              </div>
+	              </div>
+	        
+	    		</div>
+	    	</div>
+ 		</div>
+	</div>
+
+	<div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+
+	  <a href="{% url 'products:product-list' %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</a>
+
+	  <a href="{% url 'products:product-delete' product.pk %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Delete</a>
+
+	  <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Update Product</button>
+
+	</div>
+
+</form>
+</div>
+</div>
+</div>
+
+<script>
+
+function openTab(tabName) {
+  var i;
+  var x = document.getElementsByClassName("tabSelect");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  document.getElementById(tabName).style.display = "block";
+}
+
+</script>
+
+{% endblock content %}

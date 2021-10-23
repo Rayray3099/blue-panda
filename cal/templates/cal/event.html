@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.form {
+  margin: auto;
+}
+
+.form input, .form select, .form textarea {
+  border-radius: 5px;
+  border: 2px solid #D1D5DB;
+  outline: none;
+  background: none;
+  padding: 10px;
+  width: 100%;
+}
+
+</style>
+</head>
+
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                {{ field.label }} <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ field.label }} <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<form method="post">
+  {% csrf_token %}
+  <table class="form form-table">
+    {{ form }}
+
+    <tr><td colspan="2">
+
+      <div class="px-4 py-3 text-right sm:px-6">
+
+      <button type="submit" name="delete_event" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Delete Event </button>
+
+      <button type="submit" name="create_event" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Create Event </button>
+      </div>
+
+    </td></tr>
+
+  </table>
+</form>
+
+{% endblock content %}
