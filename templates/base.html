@@ -1,0 +1,28 @@
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Blue Panda</title>
+  <meta name="description" content="Blue Panda">
+  <meta name="author" content="Blue Panda">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/starability-all.css' %}" rel="stylesheet" />
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="max-w-7xl mx-auto">
+	<div class="sticky top-0 z-50 bg-white">
+	{% include 'navbar.html' %}
+	</div>
+	<div class="relative">
+	{% block content %}
+	{% endblock content %}
+	</div>
+	</div>
+	{% include "scripts.html" %}
+</body>
+</html>
