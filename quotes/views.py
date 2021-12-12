@@ -51,17 +51,28 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
         active_filter = self.request.GET.get('active')
         ordering = self.get_ordering()
 
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+
         if query:
             object_list = Quote.objects.filter(active=active_filter) & Quote.objects.filter(
-                Q(customer__icontains=query) |
-                Q(products__icontains=query) |
-                Q(quote_id__icontains=query))
-            
+                Q(customer__first_name__icontains=query) |
+                Q(customer__last_name__icontains=query) |
+                Q(customer__address__icontains=query) |
+                Q(customer__home_phone__icontains=query)).order_by(ordering)
+
+        elif start_date and end_date:
+            object_list = Quote.objects.filter(active=active_filter) & Quote.objects.filter(
+                Q(customer__first_name__icontains=query) |
+                Q(customer__last_name__icontains=query) |
+                Q(customer__address__icontains=query) |
+                Q(customer__home_phone__icontains=query)).filter(date_added__range=(start_date, end_date))
+           
         elif active_filter=="NO":
-            object_list = Quote.objects.all().filter(active="NO")#.order_by(ordering)
+            object_list = Quote.objects.all().filter(active="NO").order_by(ordering)
             
         else:
-            object_list = Quote.objects.all().filter(active="YES")#.order_by(ordering)
+            object_list = Quote.objects.all().filter(active="YES").order_by(ordering)
    
         return object_list
 
@@ -72,13 +83,13 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment;filename=export_quote.csv'
 
-            export_header_names = ['first_name', 'last_name', 'address', 'city', 'province', 'country', 'zip_code', 'home_phone', 'work_phone', 'email']
+            export_header_names = ['quote_id', 'customer', 'date_added', 'status']
 
             writer = csv.writer(response)
             writer.writerow(export_header_names)
 
-            #for row in self.object_list:
-            #    writer.writerow([row.first_name, row.last_name, row.address, row.city, row.province, row.country, row.zip_code, row.home_phone, row.work_phone, row.email])
+            for row in self.object_list:
+                writer.writerow([row.quote_id, row.customer, row.date_added, row.status])
             return response
 
         if request.POST.get('bulk_delete'):

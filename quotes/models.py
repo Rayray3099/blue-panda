@@ -15,6 +15,7 @@ def current_milli_time():
     return round(time.time() * 1000)
 
 class Quote(models.Model):
+    
     ACTIVE_CHOICES = (
         ('YES','YES'),
         ('NO', 'NO'),
