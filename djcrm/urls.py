@@ -14,7 +14,7 @@ urlpatterns = [
     path('invoices/', include('invoices.urls', namespace="invoices")),
     path('quotes/', include('quotes.urls', namespace="quotes")),
     path('suppliers/', include('suppliers.urls', namespace="suppliers")),
-    path('calendar/', include('cal.urls')),
+    path('scheduler/', include('scheduler.urls', namespace="scheduler")),
     path('signup/', SignupView.as_view(), name='signup'),
     path('reset-password/', PasswordResetView.as_view(), name='reset-password'),
     path('password-reset-done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
