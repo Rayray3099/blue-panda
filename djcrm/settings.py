@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'invoices',
     'quotes',
     'suppliers',
-    'cal',
+    'scheduler',
 
     # Third party forms
     'crispy_forms',
