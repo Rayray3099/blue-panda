@@ -39,6 +39,9 @@ class SupplierListView(LoginRequiredMixin, generic.ListView):
         active_filter = self.request.GET.get('active')
         ordering = self.get_ordering()
 
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+
         if query:
             object_list = Supplier.objects.filter(active=active_filter) & Supplier.objects.filter(
                 Q(business_name__icontains=query) |
@@ -48,6 +51,16 @@ class SupplierListView(LoginRequiredMixin, generic.ListView):
                 Q(home_phone__icontains=query) |        
                 Q(email__icontains=query)
                 ).order_by(ordering)
+
+        elif start_date and end_date:
+            object_list = Supplier.objects.filter(active=active_filter) & Supplier.objects.filter(
+                Q(business_name__icontains=query) |
+                Q(last_name__icontains=query) |
+                Q(address__icontains=query) |
+                Q(zip_code__icontains=query) |
+                Q(home_phone__icontains=query) |        
+                Q(email__icontains=query)
+                ).filter(date_added__range=(start_date, end_date))
             
         elif active_filter=="NO":
             object_list = Supplier.objects.all().filter(active="NO").order_by(ordering)
