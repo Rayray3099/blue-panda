@@ -19,7 +19,7 @@ class Invoice(models.Model):
 
     invoice_id = models.CharField(max_length=64, default=create_id)
     quote = models.ForeignKey(Quote, on_delete=models.PROTECT)
-    date_added = models.DateTimeField(default=timezone.now)
+    date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
 
     invoice_first_name = models.CharField(max_length=64)
     invoice_last_name = models.CharField(max_length=64)
@@ -38,7 +38,7 @@ class Invoice(models.Model):
 class InvoiceNotes(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_added = models.DateTimeField(default=timezone.now)
+    date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
     notes = models.CharField(max_length=200)
 
     def __str__(self):
