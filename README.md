@@ -1,2 +1,4 @@
 # blue-panda
-Free ERP built with Django by one guy name RTL part time since pandemic 2020.
+Free CRM/ERP tool built with Django by one guy (RTL) part time, project started in November 2020.
+
+Collabrations are welcome.
