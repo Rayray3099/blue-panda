@@ -42,7 +42,7 @@ a:hover img {
 <div class="whitespace-nowrap">
 
 
-<div class="grid grid-cols-7 gap-5">
+<div class="fixed bg-white grid grid-cols-7 gap-5">
 
 	<div class="col-span-1 sm:col-span-1">
 
@@ -97,7 +97,7 @@ a:hover img {
 
 	  	<form method="GET">
 		
-	   	<select name="active" class="inline-flex justify-center py-2 px-4 border-2 border-gray-300 bg-white rounded-lg text-sm focus:outline-none">
+	   	<select name="active" class="inline-flex justify-center h-10 px-2 mr-2 border-2 border-gray-300 bg-white rounded-lg text-sm focus:outline-none">
 	   		
 	    <option value="YES" />Active Records</option>
 	    <option value="NO" />None Active</option>
@@ -107,18 +107,24 @@ a:hover img {
 	</div>
 
 
-	<div class="col-span-1 sm:col-span-1">
-	</div>
+  <div class="col-span-1 sm:col-span-1">
 
-	<div class="col-span-1 sm:col-span-1">
-	</div>
+   <input class="border-2 border-gray-300 bg-white h-10 w-30 px-1 mr-1 rounded-lg text-sm focus:outline-none" type="date" name="start_date" placeholder="Start">
+
+  </div>
+
+  <div class="col-span-1 sm:col-span-1">
+
+  <input class="border-2 border-gray-300 bg-white h-10 w-30 px-1 mr-1 rounded-lg text-sm focus:outline-none" type="date" name="end_date" placeholder="End">
+
+  </div>
 
 
 	<div class="col-span-1 sm:col-span-1">
 
 	<div class="relative mx-auto text-gray-600">
 
-	<input class="border-2 border-gray-300 bg-white h-10 px-5 pr-0 rounded-lg text-sm focus:outline-none" type="search" name="q" placeholder="Search">
+	<input class="border-2 border-gray-300 bg-white h-10 w-30 px-1 rounded-lg text-sm focus:outline-none" type="search" name="q" placeholder="Search">
 
 		<button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
 
@@ -140,6 +146,10 @@ a:hover img {
 
 </div>
 </div><!-- end of first row container div -->
+
+<br/>
+<br/>
+<br/>
 
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="flex flex-col">
@@ -278,26 +288,6 @@ a:hover img {
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">{{ product.upc|slice:":24" }}</div>
               </td>
-
-              <!--
-              <td class="px-6 py-4 whitespace-nowrap">
-                {{ form.inventory_count.errors }}
-                <div class="text-sm text-gray-900 border-2 bg-white h-5 pr-4 rounded focus:outline-none">
-                <div class="has-tooltip">
-                {{ form.inventory_count }}
-                <span class="tooltip">INTEGERS ONLY PLEASE</span></div>
-                </div>
-              </td>
-
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                {{ form.sell_price.errors }}
-                <div class="text-sm text-gray-900 border-2 bg-white h-5 pr-4 rounded focus:outline-none">
-                <div class="has-tooltip">
-                {{ product.sell_price }} {{ form.sell_price }}
-                <span class="tooltip">INTEGERS ONLY PLEASE</span></div>
-                </div>
-              </td> -->
 
 
               <td class="px-6 py-4 whitespace-nowrap">
