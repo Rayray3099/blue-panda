@@ -45,7 +45,7 @@
 
                 <li><a href="{% url 'scheduler:schedule-create' %}" class="block px-5 py-4 pr-5">Create new quote</a></li>
 
-                <li><a href="{% url 'scheduler:schedule-create' %}" class="block px-5 mb-4 pr-5">Upload CSV file</a></li>
+                <li><a href="{% url 'scheduler:schedule-upload' %}" class="block px-5 mb-4 pr-5">Upload CSV file</a></li>
 
 	          	  <form method="POST">
 	          	  {% csrf_token %}
@@ -195,13 +195,13 @@
               
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 
-                Home Phone
+                User
 
               </th>
 
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 
-                Status
+                Notes
 
               </th>
 

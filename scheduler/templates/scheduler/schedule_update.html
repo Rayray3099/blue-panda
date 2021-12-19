@@ -53,7 +53,7 @@ textarea:focus, input:focus{
 <div class="md:flex justify-center mt-5 ml-10 mr-10 md:mt-0 md:col-span-5">
 
 
-<form method="post">
+<form method="POST" id="schedule_create">
 {% csrf_token %}  
 
 	<div class="shadow overflow-hidden sm:rounded-md">
@@ -61,7 +61,11 @@ textarea:focus, input:focus{
 
 	    <a class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-dark font-semibold" href="#">Detail</a>
 
-	    <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="#">Notes</a>
+
+	    <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="{% url 'scheduler:schedule-list-note' schedule.pk %}">Notes</a>
+
+
+	    <!--<a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="#">Notes</a>-->
 
 
 		<div class="panel-1 tab-content active">
@@ -77,39 +81,169 @@ textarea:focus, input:focus{
 	              <div class="col-span-6 sm:col-span-6">
 
 	              	<table width="100%">
+
+	              		<tr>
+
+	              			<td class="inline-flex justify-center py-2 px-4 text-md font-medium rounded-md text-black">{{ schedule.user }}</td>
+
+	              			<td class="inline-flex justify-center py-2 px-4 text-md font-medium rounded-md text-black">
+	              			{{ schedule.date_added }}</td>
+
+	              			<td class="inline-flex justify-center py-2 px-4 text-md font-medium rounded-md text-black">
+	              			{{ schedule.alarm_day }}</td>
+
+	              			<td class="inline-flex justify-center py-2 px-4 text-md font-medium rounded-md text-black">
+	              			{{ schedule.schedule_day }}</td>
+
+
+
+	              		</tr>
+
+	              		<tr>
+	              			<td></td>
+	              			<td></td>
+	              			<td></td>
+
+	              			<td></td>
+	              			<td></td>
+	              		</tr>
+
+	              	</table>
+					
+	              </div>
+
+</form>
+
+
+	              <div class="col-span-6 sm:col-span-6">
+					<hr>
+	              </div>
+
+
+	              <div class="col-span-6 sm:col-span-6">
+
+
+					<form method="POST">
+					{% csrf_token %}  
+
+	              	<table width="100%">
+
 	              	<tr>
 
-	              	<td>
-	              	<label class="block text-sm font-medium text-gray-700">Scheduled Day</label>
-	              	<div class="border-2 border-gray-300 bg-white w-30 h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none" required>
-	              	{{ form.schedule_day }}
+	              	<td width="10%">
+              		<div class="border-2 border-gray-300 bg-white h-10 px-3 rounded-md text-md focus:outline-none">
+	              		{{ form.schedule_time }}
 	              	</div>
+	              	</td> 
+	              	
+	              	<td>
+              		<div class="border-2 border-gray-300 bg-white h-10 px-3 rounded-md text-md focus:outline-none">
+              			{{ form.schedule_item }}
+              		</div>
 	              	</td>
 
-	              	<td>
-	              	<label class="block text-sm font-medium text-gray-700">Alarm Day</label>
-	              	<div class="border-2 border-gray-300 bg-white w-30 h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none" required>
-					{{ form.alarm_day }}
-	              	</div>
-					</td>
+					</tr>
+
+					<tr>
+						<td></td>
+
+						<td>
+	              		<input type="submit" name="add_cart" class="border-2 border-gray-300 bg-white h-10 w-20 px-3 rounded-md text-md focus:outline-none" value="Add">
+	              		</td>
 
 					</tr>
-					</table>
 
-	              </div>
 
-	              <div class="col-span-6 sm:col-span-6">
+
+	              	</table>
+
+
+					</form>
+
 	              	<hr>
-				  </div>
+
+	              </div>
+
+
 
 	              <div class="col-span-6 sm:col-span-6">
-	              	<div class="border-2 border-gray-300 bg-white h-10 px-2 pr-5 rounded-lg text-lg focus:outline-none" required>
-					{{ form.schedule_notes }}
-					</div>
+
+
+                	{% if not schedule_list %}
+
+	                  <div class="sm:w-auto md:w-auto lg:w-auto mt-2 mx-auto bg-white rounded-lg shadow p-4">
+	                  No schedule yet...
+	                  </div>
+                  
+
+	                {% else %}
+
+
+	                  	<table width="100%">
+
+	                  	{% for schedule in schedule_list %}
+
+	                  		<tr>
+							
+	                  		<td width="10%">{{ schedule.schedule_time }}</td>
+	                  		<td>{{ schedule.schedule_item }}</td>
+
+	                  		<td></td>
+	                  		<td>
+	                  		<center>
+	                  		<input type="checkbox" name="multi_delete" class="form-checkbox h-4 w-4" value="{{ schedule.id }}">
+	                  		</center>
+	                  		</td>
+	                  			                  		
+	                  		</tr>
+
+
+
+	                  	{% endfor %}
+
+
+	                  		<tr>
+
+	                  			<td></td>
+
+	                  			<td>
+			              		</td>
+
+	                  			<td>
+			              		<input type="submit" name="delete_product" value="Remove" class="border-2 border-gray-300 bg-white h-9 px-2 rounded-md text-md focus:outline-none">	                  				
+	                  			</td>
+
+	                  			<td>
+
+	                  			</td>
+
+		              		</tr>
+
+						</table>
+
+
+                  	{% endif %}
+
+
 	              </div>
+
+
+
+
+	              <div class="col-span-6 sm:col-span-6">
+
+	              </div>
+
+
+	              <div class="col-span-6 sm:col-span-6">
+
+	              </div>
+
+
 
 	        
 	    		</div>
+
 	    	</div>
  		</div>
 	</div>
@@ -118,11 +252,10 @@ textarea:focus, input:focus{
 
 	  <a href="{% url 'scheduler:schedule-list' %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</a>
 
-	  <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create Event</button>
+	  <button type="submit" name="schedule_create" form="schedule_create" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Update Schedule</button>
 
 	</div>
 
-</form>
 
 </div>
 </div>
