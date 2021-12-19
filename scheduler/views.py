@@ -13,13 +13,12 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 
-from leads.models import Lead
+from leads.models import Lead, User
 from products.models import Product
 from quotes.models import QuoteProducts
 
-from .models import Schedule, ScheduleNotes
-
-from .forms import ScheduleModelForm, ScheduleNoteForm
+from .models import Schedule, ScheduleItems, ScheduleNotes
+from .forms import ScheduleModelForm, ScheduleItemForm, ScheduleNoteForm
 
 
 class ScheduleListView(LoginRequiredMixin, generic.ListView):
@@ -41,7 +40,7 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
         context = super(ScheduleListView, self).get_context_data(*args, **kwargs)
         context['current_order'] = self.get_ordering()
         context['order'] = self.order
-        context['active_list'] = Schedule.objects.all()
+        context['active_list'] = Schedule.objects.all().filter(user=self.request.user)
         return context
 
     def get_queryset(self, query=None):
@@ -86,7 +85,7 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
             writer.writerow(export_header_names)
 
             for row in self.object_list:
-                writer.writerow([row.schedule_id, row.user, row.schedule_day, row.alarm_day, row.schedule_notes])
+                writer.writerow([row.schedule_id, row.user_id, row.schedule_day, row.alarm_day, row.schedule_notes])
             return response
 
         if request.POST.get('bulk_delete'):
@@ -116,6 +115,7 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
             return redirect("scheduler:schedule-list")
 
 class ScheduleCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Schedule
     template_name = "scheduler/schedule_create.html"
     form_class = ScheduleModelForm
 
@@ -128,7 +128,44 @@ class ScheduleCreateView(LoginRequiredMixin, generic.CreateView):
 class ScheduleUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Schedule
     template_name = "scheduler/schedule_update.html"
-    form_class = ScheduleModelForm
+    form_class = ScheduleItemForm
+
+    def get_context_data(self, **kwargs):
+        context = super(ScheduleUpdateView, self).get_context_data(**kwargs)
+        schedule = Schedule.objects.get(pk=self.kwargs.get('pk'))
+        
+        if self.request.POST:
+            context['schedule_select'] = ScheduleItemForm(self.request.POST, instance=schedule)
+            context['schedule_list'] = ScheduleItems.objects.filter(schedule_id=self.kwargs['pk'])
+
+        else:
+            context['schedule_select'] = ScheduleItemForm(instance=schedule)
+            context['schedule_list'] = ScheduleItems.objects.filter(schedule_id=self.kwargs['pk'])
+           
+        return context
+
+    def post(self, request, *args, **kwargs):
+        schedule = Schedule.objects.get(pk=self.kwargs.get('pk'))
+
+        if request.method=='POST' and 'add_cart' in request.POST:
+            
+            current_time = request.POST['schedule_time']
+            current_item = request.POST['schedule_item']
+            
+            new_entry = ScheduleItems(schedule_id=self.kwargs.get('pk'), schedule_time=current_time, schedule_item=current_item)
+            new_entry.save()
+
+            return HttpResponseRedirect(self.request.path_info)
+
+        if request.method=='POST' and 'multi_delete' in request.POST:
+            delete_list = request.POST.getlist('multi_delete')
+
+            for each_id in delete_list:
+                ScheduleItems.objects.get(id=each_id).delete()
+
+            return HttpResponseRedirect(self.request.path_info)
+
+        return redirect("scheduler:schedule-list")
             
     def get_success_url(self):
         return reverse("scheduler:schedule-list")
@@ -139,8 +176,6 @@ class ScheduleDeleteView(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse("scheduler:schedule-list")
-
-
 
 
 class ScheduleDetailView(LoginRequiredMixin, generic.DetailView):    
@@ -191,3 +226,170 @@ class ScheduleDeleteNote(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse("scheduler:schedule-list")
+
+
+
+
+
+class ScheduleUploadView(LoginRequiredMixin, generic.ListView):
+    template_name = "scheduler/schedule_upload.html"
+    queryset = Schedule.objects.all()
+    
+    def post(self, request, *args, **kwargs):
+        
+        header_original = ['schedule_id', 'user', 'date_added', 'schedule_day', 'alarm_day', 'schedule_notes']
+        header_count = len(header_original)
+
+        if request.POST.get('import_csv'):
+
+            csv_file = request.FILES['file']
+
+            if csv_file.name.endswith('.csv'):
+                df_model_test = pd.DataFrame(list(Schedule.objects.all().values('id')))
+
+            else:
+                messages.info(request, 'File format is not .csv')
+                return render(request, "scheduler/schedule_upload.html", {}) 
+
+            # Check for keys from existing data            
+            if not df_model_test.empty:
+                df_from_model_id = df_model_test
+                df_from_model_id_filtered = df_from_model_id['id'].values.tolist()
+
+                print("This is df_from_model_id_filtered")
+                print(df_from_model_id_filtered)
+                
+                df_from_model = pd.DataFrame(list(Schedule.objects.all().values('user', 'schedule_day', 'alarm_day')))
+                df_from_model.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+                
+                df_from_model_key_user = list(df_from_model['user'])
+                df_from_model_key_sday = list(df_from_model['schedule_day'])
+                df_from_model_key_aday = list(df_from_model['alarm_day'])
+
+                df_from_model_key = []
+
+                for x,y,z in zip(df_from_model_key_user, df_from_model_key_sday, df_from_model_key_aday):
+                    each_key = str(x) + str(y) + str(z)
+                    df_from_model_key.append(each_key)
+                    
+                print(df_from_model_key)
+                           
+            else:
+                df_from_model_key = []
+
+
+            print("model key ")
+            print(df_from_model_key)
+
+
+            df = pd.read_csv(csv_file)
+            df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
+            # Check if columns contain key info
+            if 'user' in df.columns and 'schedule_day' in df.columns and 'alarm_day' in df.columns:
+                lead_keys = True
+            else:
+                messages.info(request, 'Headers missing, key columns (user, schedule_day, alarm_day) are missing.')
+                return render(request, "scheduler/schedule_upload.html", {}) 
+                lead_keys = False
+
+            df_from_csv = df[['user', 'schedule_day', 'alarm_day']]
+
+            df_from_csv_key_user = list(df_from_csv['user'])
+            df_from_csv_key_sday = list(df_from_csv['schedule_day'])
+            df_from_csv_key_aday = list(df_from_csv['alarm_day'])
+
+            df_from_csv_key = []
+
+            for x,y,z in zip(df_from_csv_key_user, df_from_csv_key_sday, df_from_csv_key_aday):
+                each_key = str(x) + str(y) + str(z)
+                df_from_csv_key.append(each_key)
+
+            print("df csv key ")
+            print(df_from_csv_key)
+
+            try:            
+                match_positions = [i for i, item in enumerate(df_from_csv_key) if item in df_from_model_key]
+            except TypeError:
+                match_positions = 0
+                
+            try:
+                diff_positions = [i for i, item in enumerate(df_from_csv_key) if item not in df_from_model_key]
+            except TypeError:
+                diff_positions = 0
+
+
+            print("match")
+            print(match_positions)
+
+            print("different")
+            print(diff_positions)
+
+            
+            pk_numbers = []
+            if len(match_positions) != 0:
+                match_id = [i for i, item in enumerate(df_from_model_key) if item in df_from_csv_key]
+                df_update = df.iloc[match_positions,:]
+                df_update_all = df_update[['schedule_day', 'alarm_day']]
+
+                for each in match_id:
+                    pk_numbers.append(df_from_model_id_filtered[each])
+
+                if 'schedule_day' in df_update.columns:
+                    schedule_day = df_update['schedule_day'].tolist()                    
+                    for x, y in zip(pk_numbers, schedule_day):
+                        Schedule.objects.filter(id = x).update(schedule_day=y)
+
+                if 'alarm_day' in df_update.columns:
+                    alarm_day = df_update['alarm_day']
+                    for x, y in zip(pk_numbers, alarm_day):
+                        Schedule.objects.filter(id = x).update(alarm_day=y)
+
+                # This section adds new records after update the exisiting records
+                if len(diff_positions) != 0:
+                    df_create = df.iloc[diff_positions,:]            
+                    row_iter_create = df_create.iterrows()
+
+                    try:
+                        objs = [
+                            Schedule(
+                                schedule_day = row['schedule_day'],
+                                alarm_day = row['alarm_day'],
+                            )
+                            for index, row in row_iter_create
+                        ]
+
+                        Schedule.objects.bulk_create(objs)
+                        messages.info(request, 'Woohoo both update and import successful! ' + str(len(diff_positions)) + ' records are added')
+                        return render(request, "scheduler/schedule_upload.html", {})
+                    
+                    except Exception as e:
+                        messages.info(request, 'For new upload please make sure all headers are in csv file and follow the template. Use (first_name, last_name, address...) make sure spelling and _ are correct.')
+                        return render(request, "scheduler/schedule_upload.html", {})
+  
+                messages.info(request, 'Hooray update successful! ' + str(len(match_positions)) + ' records are updated')
+                return render(request, "scheduler/schedule_upload.html", {})
+
+            if len(diff_positions) != 0:
+                df_create = df.iloc[diff_positions,:]            
+                row_iter_create = df_create.iterrows()
+
+                try:
+                    objs = [
+                        Schedule(
+                                schedule_day = row['schedule_day'],
+                                alarm_day = row['alarm_day'],
+                        )
+                        for index, row in row_iter_create
+                    ]
+
+                    Schedule.objects.bulk_create(objs)
+                    messages.info(request, 'Yay import successful! ' + str(len(diff_positions)) + ' records are added')
+                    return render(request, "scheduler/schedule_upload.html", {})
+                
+                except Exception as e:
+                    messages.info(request, 'For new upload please make sure all headers are in csv file and follow the template. Use (first_name, last_name, address...) make sure spelling and _ are correct.')
+                    return render(request, "scheduler/schedule_upload.html", {})
+            else:
+                messages.info(request, 'No update or import was found!')
+                return render(request, "scheduler/schedule_upload.html", {})

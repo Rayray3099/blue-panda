@@ -34,6 +34,17 @@ class Schedule(models.Model):
     def __str__(self):
         return f"{self.user}"
 
+
+class ScheduleItems(models.Model):
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    schedule_time = models.CharField(max_length=64)
+    schedule_item = models.CharField(max_length=128)
+    date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
+    
+    def __str__(self):
+        return f"{self.schedule}"
+
+
 class ScheduleNotes(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
