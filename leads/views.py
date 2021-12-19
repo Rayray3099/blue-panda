@@ -53,6 +53,9 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         self.active_filter = self.request.GET.get('active')
         ordering = self.get_ordering()
 
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+
         if query:
             object_list = Lead.objects.filter(active=active_filter) & Lead.objects.filter(
                 Q(first_name__icontains=query) |
@@ -63,6 +66,16 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                 Q(email__icontains=query)
                 ).order_by(ordering)
 
+        elif start_date and end_date:
+            object_list = Lead.objects.filter(active=active_filter) & Lead.objects.filter(
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query) |
+                Q(address__icontains=query) |
+                Q(zip_code__icontains=query) |
+                Q(home_phone__icontains=query) |        
+                Q(email__icontains=query)
+                ).filter(date_added__range=(start_date, end_date))
+            
         elif self.active_filter=="NO":
             object_list = Lead.objects.all().filter(active="NO").order_by(ordering)
             self.active_filter="NO"
