@@ -45,6 +45,7 @@ class QuoteProducts(models.Model):
     product_select = models.ForeignKey(Product, on_delete=models.PROTECT)
     product_quantity = models.IntegerField(default=1)
     product_price = models.FloatField(default=0)
+    date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
 
     def __str__(self):
         return f"{self.product_select}"

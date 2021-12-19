@@ -83,7 +83,7 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment;filename=export_quote.csv'
 
-            export_header_names = ['quote_id', 'customer', 'date_added', 'status']
+            export_header_names = ['quote_id', 'customer_id', 'date_added', 'status']
 
             writer = csv.writer(response)
             writer.writerow(export_header_names)
@@ -284,14 +284,13 @@ class QuoteUploadView(LoginRequiredMixin, generic.ListView):
     
     def post(self, request, *args, **kwargs):
         
-        header_original = ['first_name', 'last_name', 'address', 'city', 'province', 'country', 'zip_code', 'home_phone', 'work_phone', 'email']
+        header_original = ['quote_id', 'customer_id', 'date_added']
         header_count = len(header_original)
 
         if request.POST.get('import_csv'):
 
             csv_file = request.FILES['file']
 
-            # Check if file ends with csv
             if csv_file.name.endswith('.csv'):
                 df_model_test = pd.DataFrame(list(Quote.objects.all().values('id')))
 
@@ -303,26 +302,70 @@ class QuoteUploadView(LoginRequiredMixin, generic.ListView):
             if not df_model_test.empty:
                 df_from_model_id = df_model_test
                 df_from_model_id_filtered = df_from_model_id['id'].values.tolist()
-                df_from_model = pd.DataFrame(list(Supplier.objects.all().values('first_name', 'last_name', 'home_phone')))
-                df_from_model.applymap(lambda x: x.strip() if isinstance(x, str) else x)                       
-                df_from_model_key = list(df_from_model['first_name'] + df_from_model['last_name'] + df_from_model['home_phone'].str.replace("-","").str.replace("(","").str.replace(")",""))
+                
+                #print("This is df_from_model_id_filtered")
+                #print(df_from_model_id_filtered)
+                
+                df_from_model = pd.DataFrame(list(Quote.objects.all().values('customer_id', 'date_added')))
+                df_from_model.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+                
+                df_from_model_key_temp = list(df_from_model['customer_id'])
+                df_from_model_key_temp_two = list(df_from_model['date_added'])
+
+                #print("This is df_from_model_key_temp")
+                #print(df_from_model_key_temp)
+
+                df_from_model_key = []
+
+                for each, other in zip(df_from_model_key_temp, df_from_model_key_temp_two):
+                    full_name = Lead.objects.filter(id=each).first()
+                    full_name = str(full_name).replace("<","").replace(">","").replace("Lead: ","")
+
+                    date_stamp = str(other)
+
+                    full_info = str(full_name + date_stamp)
+                    
+                    df_from_model_key.append(full_info)
                            
             else:
                 df_from_model_key = []
+
+
+            print("model key ")
+            print(df_from_model_key)
+
 
             df = pd.read_csv(csv_file)
             df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
             # Check if columns contain key info
-            if 'first_name' in df.columns and 'last_name' in df.columns and 'home_phone' in df.columns:
+            if 'customer_id' in df.columns:
                 lead_keys = True
             else:
-                messages.info(request, 'Headers missing, key columns (first_name, last_name, home_phone) are missing.')
+                messages.info(request, 'Headers missing, key columns (customer) are missing.')
                 return render(request, "quotes/quote_upload.html", {}) 
                 lead_keys = False
 
-            df_from_csv = df[['first_name', 'last_name', 'home_phone']]
-            df_from_csv_key = list(df_from_csv['first_name'] + df_from_csv['last_name'] + df_from_csv['home_phone'].str.replace("-","").str.replace("(","").str.replace(")",""))
+            df_from_csv = df[['customer_id', 'date_added']]
+
+            #df_from_csv_key = list(str(df_from_csv['customer']) + str(df_from_csv['date_added']))
+            df_from_csv_key_user = list(df_from_csv['customer_id'])
+            df_from_csv_key_date = list(df_from_csv['date_added'])
+
+            df_from_csv_key = []
+
+            for each, other in zip(df_from_csv_key_user, df_from_csv_key_date):
+                full_name = str(each)
+                date_stamp = str(other)
+                full_info = str(full_name + date_stamp)
+                
+                df_from_csv_key.append(full_info)
+
+
+
+            print("df csv key ")
+            print(df_from_csv_key)
+
 
             try:            
                 match_positions = [i for i, item in enumerate(df_from_csv_key) if item in df_from_model_key]
@@ -333,55 +376,40 @@ class QuoteUploadView(LoginRequiredMixin, generic.ListView):
                 diff_positions = [i for i, item in enumerate(df_from_csv_key) if item not in df_from_model_key]
             except TypeError:
                 diff_positions = 0
+
+            print("match")
+            print(match_positions)
+
+            print("different")
+            print(diff_positions)
             
             pk_numbers = []
             if len(match_positions) != 0:
                 match_id = [i for i, item in enumerate(df_from_model_key) if item in df_from_csv_key]
                 df_update = df.iloc[match_positions,:]
-                df_update_all = df_update[['first_name', 'last_name']]
+                df_update_all = df_update[['customer_id', 'date_added']]
 
                 for each in match_id:
                     pk_numbers.append(df_from_model_id_filtered[each])
 
-                if 'address' in df_update.columns:
-                    address = df_update['address'].tolist()                    
-                    for x, y in zip(pk_numbers, address):
-                        Quote.objects.filter(id = x).update(address=y)
+                if 'customer_id' in df_update.columns:
+                    customer = df_update['customer_id'].tolist()
+                    print("This is customer")
+                    print(customer)
 
-                if 'city' in df_update.columns:
-                    city = df_update['city']
-                    for x, y in zip(pk_numbers, city):
-                        Quote.objects.filter(id = x).update(city=y)
+                    print("This is pk_numbers")
+                    print(pk_numbers)
+                    
+                    for x, y in zip(pk_numbers, customer):
+                        Quote.objects.filter(id=x).update(customer_id=x)
 
-                if 'province' in df_update.columns:
-                    province = df_update['province']
-                    for x, y in zip(pk_numbers, province):
-                        Quote.objects.filter(id = x).update(province=y)
-
-                if 'country' in df_update.columns:
-                    country = df_update['country']
-                    for x, y in zip(pk_numbers, country):
-                        Quote.objects.filter(id = x).update(country=y)
-
-                if 'zip_code' in df_update.columns:
-                    zip_code = df_update['zip_code']
-                    for x, y in zip(pk_numbers, zip_code):
-                        Quote.objects.filter(id = x).update(zip_code=y)
-
-                if 'work_phone' in df_update.columns:
-                    work_phone = df_update['work_phone']
-                    for x, y in zip(pk_numbers, work_phone):
-                        Quote.objects.filter(id = x).update(work_phone=y)
-
-                if 'email' in df_update.columns:
-                    email = df_update['email']
-                    for x, y in zip(pk_numbers, email):
-                        Quote.objects.filter(id = x).update(email=y)
-
-                if 'active' in df_update.columns:
-                    active = df_update['active']
-                    for x, y in zip(pk_numbers, active):
-                        Quote.objects.filter(id = x).update(active=y)
+                if 'date_added' in df_update.columns:
+                    date_added = df_update['date_added'].tolist()
+                    print("This is date_added")
+                    print(date_added)
+                    
+                    for x, y in zip(pk_numbers, date_added):
+                        Quote.objects.filter(id=x).update(date_added=y)
 
                 # This section adds new records after update the exisiting records
                 if len(diff_positions) != 0:
@@ -391,16 +419,7 @@ class QuoteUploadView(LoginRequiredMixin, generic.ListView):
                     try:
                         objs = [
                             Quote(
-                                first_name = row['first_name'],
-                                last_name = row['last_name'],
-                                address  = row['address'],
-                                city  = row['city'],
-                                province = row['province'],
-                                country = row['country'],
-                                zip_code  = row['zip_code'],
-                                home_phone  = row['home_phone'],
-                                work_phone = row['work_phone'],
-                                email  = row['email'],
+                                customer = row['customer_id'],
                             )
                             for index, row in row_iter_create
                         ]
@@ -423,16 +442,7 @@ class QuoteUploadView(LoginRequiredMixin, generic.ListView):
                 try:
                     objs = [
                         Quote(
-                            first_name = row['first_name'],
-                            last_name = row['last_name'],
-                            address  = row['address'],
-                            city  = row['city'],
-                            province = row['province'],
-                            country = row['country'],
-                            zip_code  = row['zip_code'],
-                            home_phone  = row['home_phone'],
-                            work_phone = row['work_phone'],
-                            email  = row['email'],
+                            customer = row['customer_id'],
                         )
                         for index, row in row_iter_create
                     ]
