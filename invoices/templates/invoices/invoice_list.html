@@ -155,8 +155,8 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 
                 <a href="{% url 'invoices:invoice-list' %}?ordering=invoice_first_name&order={% if order == 'desc' %}asc{% else %}desc{% endif %}" class="has-tooltip">
-                <span class="tooltip">Sort by invoice_first_name</span>
-                invoice_first_name
+                <span class="tooltip">Sort by invoice name</span>
+                Invoice Name
                 </a>
 
               </th>
@@ -167,22 +167,26 @@
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 
-                <a href="{% url 'invoices:invoice-list' %}?ordering=invoice_first_name&order={% if order == 'desc' %}asc{% else %}desc{% endif %}" class="has-tooltip">
-                <span class="tooltip" class="has-tooltip">Sort by products</span>
-                Products
+                <a href="{% url 'invoices:invoice-list' %}?ordering=invoice_address&order={% if order == 'desc' %}asc{% else %}desc{% endif %}" class="has-tooltip">
+                <span class="tooltip" class="has-tooltip">Sort by address</span>
+                Address
                 </a>
 
               </th>
               
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+
+                <a href="{% url 'invoices:invoice-list' %}?ordering=invoice_zip_code&order={% if order == 'desc' %}asc{% else %}desc{% endif %}" class="has-tooltip">
+                <span class="tooltip" class="has-tooltip">Sort by postal code</span>
                 
-                Home Phone
+                Postal Code
+                </a>
 
               </th>
 
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 
-                Status
+                Home Phone
 
               </th>
 
