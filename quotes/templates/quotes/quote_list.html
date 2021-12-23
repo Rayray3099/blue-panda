@@ -186,27 +186,28 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 
                 <a href="{% url 'quotes:quote-list' %}?ordering=date_added&order={% if order == 'desc' %}asc{% else %}desc{% endif %}" class="has-tooltip">
-                <span class="tooltip" class="has-tooltip">Sort by date_added</span>
-                date_added
+                <span class="tooltip" class="has-tooltip">Sort by address</span>
+                Address
                 </a>
 
               </th>
               
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 
-                Home Phone
+                Phone Number
 
               </th>
 
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 
-                Status
+                Date Added
 
               </th>
 
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 
-
+              	Status
+              	
               </th>
 
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -255,19 +256,19 @@
               </td>
 
               <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ quote.customer.address|slice:":32" }}</div>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">{{ quote.customer.home_phone|slice:":25" }}</div>
               </td>
 
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ quote.customer.email }}</div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ quote.status }}</div>
+                <div class="text-sm text-gray-900">{{ quote.date_added }}</div>
               </td>
 
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                             
+            	<div class="text-sm text-gray-900">{{ quote.status }}</div>        
               </td>
 
               <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">

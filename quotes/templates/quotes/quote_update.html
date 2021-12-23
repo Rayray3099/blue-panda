@@ -94,7 +94,6 @@ ul {
 	    <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="{% url 'quotes:quote-list-note' quote.pk %}">Notes</a>
 
 
-
 		<div class="panel-1 tab-content active">
 	      <div class="mt-10 sm:mt-0">
 	          <div class="px-4 py-5 bg-white sm:p-6">
@@ -112,17 +111,32 @@ ul {
 	              	<table width="100%">
 
 	              		<tr>
-	              			<td width="50%" class="inline-flex justify-center py-2 px-4 border-2 border-gray-300 shadow-sm text-md font-medium rounded-md text-black">{{ quote.customer.first_name }} {{ quote.customer.last_name }}</td>
+	              			<td class="inline-flex py-2 text-md font-medium rounded-md text-black">{{ quote.customer.first_name }} {{ quote.customer.last_name }}</td>
+	              			<td></td>
+	              			<td></td>
+	              			<td></td>
+	              			<td></td>
 	              		</tr>
 
 	              		<tr>
-	              			<td width="50%">{{ quote.customer.address }} {{ quote.customer.zip_code }}</td>
+	              			<td>{{ quote.customer.address }} {{ quote.customer.zip_code }}</td>
+	              			<td></td>
 	              			<td></td>
 	              			<td>{{ quote.customer.home_phone }}</td>
+	              			<td>{{ quote.customer.email }}</td>
+	 
+	              		</tr>
 
+
+	              		<tr>
+	              			<td>Quote status: </td>
+	              			<td></td>
+	              			<td></td>
 	              			<td>{{ quote.active }}</td>
 	              			<td>{{ quote.status }}</td>
 	              		</tr>
+
+
 
 	              	</table>
 					
@@ -146,28 +160,23 @@ ul {
 
 	              	<tr>
 
-	              	<td width="90%">
-	              		{{ form.product_select }}
-	              	</td> 
-	              	
-	              	<td>
-              		<div class="border-2 border-gray-300 bg-white h-9 px-3 rounded-md text-md focus:outline-none">
-              			{{ form.product_quantity }}
-              		</div>
-	              	</td>
+		              	<td width="80%">
+		              		{{ form.product_select }}
+		              	</td> 
+		              	
+		              	<td>
+	              		<div class="border-2 border-gray-300 bg-white h-9 px-3 rounded-md text-md focus:outline-none">
+	              			{{ form.product_quantity }}
+	              		</div>
+		              	</td>
 
-					</tr>
-
-					<tr>
-						<td></td>
 
 						<td>
-	              		<input type="submit" name="add_cart" class="border-2 border-gray-300 bg-white h-9 px-3 rounded-md text-md focus:outline-none" value="Add">
+	              		<input type="submit" name="add_cart" class="border-2 border-gray-300 bg-white h-10 px-3 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" value="Add">
 	              		</td>
 
+
 					</tr>
-
-
 
 	              	</table>
 
@@ -209,7 +218,10 @@ ul {
 
 	                  		<tr>
 							
-	                  		<td width="80%">{{ product }}</td>
+	                  		<td>
+	                  		{{ product|slice:":32" }}
+	                  		</td>
+
 	                  		<td>{{ product.product_quantity }}</td>
 	                  		<td>{{ product.product_price }}</td>
 
@@ -230,18 +242,12 @@ ul {
 	                  		<tr>
 
 	                  			<td></td>
-
-	                  			<td>
-			              		<input type="submit" name="delete_product" value="Remove" class="border-2 border-gray-300 bg-white h-9 px-2 rounded-md text-md focus:outline-none">
-			              		</td>
-
+	                  			<td></td>
 	                  			<td></td>
 
 	                  			<td>
-			              		<input type="submit" name="add_to_invoice" value="Add to Invoice" class="border-2 border-gray-300 bg-white h-9 px-2 rounded-md text-md focus:outline-none">
+			              		<input type="submit" name="delete_product" value="Remove" class="border-2 border-gray-300 bg-white h-10 px-3 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 			              		</td>
-
-	                  			<td></td>
 
 		              		</tr>
 
@@ -281,8 +287,6 @@ ul {
 
 	              </div>
 
-
-
 	        
 	    		</div>
 
@@ -292,9 +296,13 @@ ul {
 
 	<div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
 
-	  <a href="{% url 'quotes:quote-list' %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</a>
+		<a href="{% url 'quotes:quote-list' %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</a>
 
-	  <button type="submit" name="quote_create" form="quote_create" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Update Quote</button>
+		<button type="submit" name="quote_create" form="quote_create" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Update Quote</button>
+
+		<button onclick="window.print()" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Print to PDF</button>
+
+		<button type="submit" name="add_to_invoice" class="border-2 border-gray-300 bg-white h-10 px-3 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add to Invoice</button>
 
 	</div>
 
