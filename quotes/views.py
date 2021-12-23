@@ -5,8 +5,6 @@ import datetime
 
 from django.contrib import messages
 from django.views import generic
-from django.views.generic import FormView
-from django.views.generic.detail import SingleObjectMixin
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
@@ -219,10 +217,20 @@ class QuoteUpdateView(LoginRequiredMixin, generic.UpdateView):
             return redirect("quotes:quote-list")
 
 
+        if request.method=='POST' and 'generate_pdf' in request.POST:
+            
+            return render_to_pdf(
+                    'quotes/quote_update.html',
+                    {
+                        'pagesize':'A4',
+                        'product_list': context,
+                    }
+                )
+
         return redirect("quotes:quote-list")
         
-    def get_success_url(self):
-        return reverse("quotes:quote-list")
+    #def get_success_url(self):
+        #return reverse("quotes:quote-list")
 
 
     def form_valid(self, form):

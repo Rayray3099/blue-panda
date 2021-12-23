@@ -35,6 +35,8 @@ class Quote(models.Model):
     multi_select = models.BooleanField(default=False)
     active = models.CharField(max_length=6, choices=ACTIVE_CHOICES, default='YES')
     status = models.CharField(max_length=64, choices=STATUS_CHOICES, default='UNPAID')
+
+    sub_total = models.FloatField(default=0)
     
     def __str__(self):
         return f"{self.customer}"
@@ -46,6 +48,8 @@ class QuoteProducts(models.Model):
     product_quantity = models.IntegerField(default=1)
     product_price = models.FloatField(default=0)
     date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
+
+    product_sub_total = models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.product_select}"

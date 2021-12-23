@@ -19,8 +19,8 @@ class QuoteModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuoteModelForm, self).__init__(*args, **kwargs)
         
-        #self.fields['active'] = forms.ModelChoiceField(widget=forms.Select)
-        #self.fields['status'] = forms.ModelChoiceField(widget=forms.Select)
+        self.fields['active'] = forms.ModelChoiceField(widget=forms.Select)
+        self.fields['status'] = forms.ModelChoiceField(widget=forms.Select)
 
 
 class QuoteProductForm(forms.ModelForm):
