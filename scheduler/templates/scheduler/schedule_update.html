@@ -95,24 +95,13 @@ textarea:focus, input:focus{
 	              			<td class="inline-flex justify-center py-2 px-4 text-md font-medium rounded-md text-black">
 	              			{{ schedule.schedule_day }}</td>
 
-
-
-	              		</tr>
-
-	              		<tr>
-	              			<td></td>
-	              			<td></td>
-	              			<td></td>
-
-	              			<td></td>
-	              			<td></td>
 	              		</tr>
 
 	              	</table>
-					
-	              </div>
 
-</form>
+					</form>
+
+	              </div>
 
 
 	              <div class="col-span-6 sm:col-span-6">
@@ -128,37 +117,31 @@ textarea:focus, input:focus{
 
 	              	<table width="100%">
 
-	              	<tr>
+		              	<tr>
+			              	<td width="10%">
+		              		<div class="border-2 border-gray-300 bg-white h-10 px-3 rounded-md text-md focus:outline-none">
+			              		{{ form.schedule_time }}
+			              	</div>
+			              	</td> 
+			              	
+			              	<td width="80%">
+		              		<div class="border-2 border-gray-300 bg-white h-10 px-3 rounded-md text-md focus:outline-none">
+		              			{{ form.schedule_item }}
+		              		</div>
+			              	</td>
 
-	              	<td width="10%">
-              		<div class="border-2 border-gray-300 bg-white h-10 px-3 rounded-md text-md focus:outline-none">
-	              		{{ form.schedule_time }}
-	              	</div>
-	              	</td> 
-	              	
-	              	<td>
-              		<div class="border-2 border-gray-300 bg-white h-10 px-3 rounded-md text-md focus:outline-none">
-              			{{ form.schedule_item }}
-              		</div>
-	              	</td>
+							<td>
+		              		<input type="submit" name="add_cart" class="border-2 border-gray-300 bg-white h-10 px-3 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" value="Add">
+		              		</td>
 
-					</tr>
-
-					<tr>
-						<td></td>
-
-						<td>
-	              		<input type="submit" name="add_cart" class="border-2 border-gray-300 bg-white h-10 w-20 px-3 rounded-md text-md focus:outline-none" value="Add">
-	              		</td>
-
-					</tr>
-
+						</tr>
 
 
 	              	</table>
 
-
 					</form>
+
+
 
 	              	<hr>
 
@@ -186,7 +169,7 @@ textarea:focus, input:focus{
 	                  		<tr>
 							
 	                  		<td width="10%">{{ schedule.schedule_time }}</td>
-	                  		<td>{{ schedule.schedule_item }}</td>
+	                  		<td width="80%">{{ schedule.schedule_item }}</td>
 
 	                  		<td></td>
 	                  		<td>
@@ -204,17 +187,14 @@ textarea:focus, input:focus{
 
 	                  		<tr>
 
+	                  			<td>	                  				
+	                  			</td>
+
+	                  			<td></td>
 	                  			<td></td>
 
 	                  			<td>
-			              		</td>
-
-	                  			<td>
-			              		<input type="submit" name="delete_product" value="Remove" class="border-2 border-gray-300 bg-white h-9 px-2 rounded-md text-md focus:outline-none">	                  				
-	                  			</td>
-
-	                  			<td>
-
+			              		<input type="submit" name="delete_product" value="Remove" class="border-2 border-gray-300 bg-white h-10 px-3 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">	                  				
 	                  			</td>
 
 		              		</tr>
@@ -253,6 +233,9 @@ textarea:focus, input:focus{
 	  <a href="{% url 'scheduler:schedule-list' %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</a>
 
 	  <button type="submit" name="schedule_create" form="schedule_create" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Update Schedule</button>
+
+	  <button onclick="window.print()" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Print to PDF</button>
+
 
 	</div>
 
