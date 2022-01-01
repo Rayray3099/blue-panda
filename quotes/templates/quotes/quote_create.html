@@ -57,12 +57,6 @@ ul {
 	z-index: 100;
 }
 
-#myInput {
-	font-size: 16px; /* Increase font-size */
-	padding: 12px 20px 12px 40px; /* Add some padding */
-	margin-bottom: 12px; /* Add some space below the input */
-}
-
 
 </style>
 
@@ -76,7 +70,6 @@ ul {
 <div id="panels">
 <div class="md:grid md:grid-cols-5 md:gap-6">
 <div class="md:flex justify-center mt-5 ml-10 mr-10 md:mt-0 md:col-span-5">
-
 
 <form method="post" id="quote_create">
 {% csrf_token %}  
@@ -123,7 +116,7 @@ ul {
 
 	              <div class="col-span-6 sm:col-span-6">
 
-
+	              	{{ form.customer.address }} {{ form.customer.home_phone }}
 
 	              </div>
 
