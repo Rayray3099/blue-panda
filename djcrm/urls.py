@@ -8,8 +8,9 @@ from leads.views import LandingPageView, SignupView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', LandingPageView.as_view(), name='landing-page'),
-    path('leads/', include('leads.urls', namespace="leads")),
     path('agents/', include('agents.urls', namespace="agents")),
+    path('dashboard/', include('dashboard.urls', namespace="dashboard")),
+    path('leads/', include('leads.urls', namespace="leads")),
     path('products/', include('products.urls', namespace="products")),
     path('invoices/', include('invoices.urls', namespace="invoices")),
     path('quotes/', include('quotes.urls', namespace="quotes")),
