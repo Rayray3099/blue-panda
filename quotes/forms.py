@@ -12,15 +12,13 @@ class QuoteModelForm(forms.ModelForm):
         model = Quote
         fields = (
             'customer',
-            'active',
-            'status',
+            'active',            
             )
             
     def __init__(self, *args, **kwargs):
         super(QuoteModelForm, self).__init__(*args, **kwargs)
         
-        self.fields['active'] = forms.ModelChoiceField(widget=forms.Select)
-        self.fields['status'] = forms.ModelChoiceField(widget=forms.Select)
+        self.fields['active'].required = False
 
 
 class QuoteProductForm(forms.ModelForm):
@@ -30,6 +28,7 @@ class QuoteProductForm(forms.ModelForm):
         fields = (
             'product_select',
             'product_quantity',
+            'quote_status',
             )
 
     def __init__(self, *args, **kwargs):

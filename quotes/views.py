@@ -133,6 +133,10 @@ class QuoteCreateView(LoginRequiredMixin, generic.CreateView):
             
         return context
 
+    def form_valid(self, form):
+        quote = form.save()
+        return redirect('quotes:quote-update', pk=quote.pk)
+
     def get_success_url(self):
         return reverse("quotes:quote-list")
 
@@ -216,28 +220,12 @@ class QuoteUpdateView(LoginRequiredMixin, generic.UpdateView):
             #return HttpResponseRedirect(self.request.path_info)
             return redirect("quotes:quote-list")
 
-
-        if request.method=='POST' and 'generate_pdf' in request.POST:
-            
-            return render_to_pdf(
-                    'quotes/quote_update.html',
-                    {
-                        'pagesize':'A4',
-                        'product_list': context,
-                    }
-                )
-
         return redirect("quotes:quote-list")
-        
-    #def get_success_url(self):
-        #return reverse("quotes:quote-list")
-
 
     def form_valid(self, form):
         form.instance.quote_id = self.kwargs['pk']
         form.instance.save()
         return super(QuoteUpdateView, self).form_valid(form)
-
 
     def form_invalid(self, **kwargs):
         return self.render_to_response(self.get_context_data(**kwargs))

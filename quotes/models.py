@@ -21,11 +21,6 @@ class Quote(models.Model):
         ('NO', 'NO'),
     )
 
-    STATUS_CHOICES = (
-        ('UNPAID','UNPAID'),
-        ('PAID', 'PAID'),
-    )
-
     quote_id = models.CharField(max_length=64, default=create_id)
 
     customer = models.ForeignKey(Lead, on_delete=models.PROTECT)
@@ -34,15 +29,18 @@ class Quote(models.Model):
     date_modified = models.DateTimeField(default=timezone.now)
     multi_select = models.BooleanField(default=False)
     active = models.CharField(max_length=6, choices=ACTIVE_CHOICES, default='YES')
-    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default='UNPAID')
-
-    sub_total = models.FloatField(default=0)
     
     def __str__(self):
         return f"{self.customer}"
 
 
 class QuoteProducts(models.Model):
+
+    STATUS_CHOICES = (
+        ('UNPAID','UNPAID'),
+        ('PAID', 'PAID'),
+    )
+    
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
     product_select = models.ForeignKey(Product, on_delete=models.PROTECT)
     product_quantity = models.IntegerField(default=1)
@@ -50,6 +48,8 @@ class QuoteProducts(models.Model):
     date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
 
     product_sub_total = models.FloatField(default=0)
+
+    quote_status = models.CharField(max_length=64, choices=STATUS_CHOICES, default='UNPAID')
 
     def __str__(self):
         return f"{self.product_select}"
